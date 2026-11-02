@@ -24,6 +24,8 @@ func SigEncode(cfg *params.Cfg, c []byte, z []ring.Rq, h []ring.R2) []byte {
 
 // Algorithm 27
 // א
+//
+//go:noinline
 func SigDecode(cfg *params.Cfg, sig []byte) ([]byte, []ring.Rz, []ring.R2, error) {
 	if len(sig) != int(cfg.SigSize) {
 		return nil, nil, nil, errors.New("invalid signature size")
@@ -199,6 +201,8 @@ func makeHint(cfg *params.Cfg, z, r field.T) uint8 {
 // Algorithm 39
 // Returns nil when the number of 1s in the hint is greater than omega
 // א
+//
+//go:noinline
 func MakeHint(cfg *params.Cfg, z, r []ring.Rq) []ring.R2 {
 	hints := make([]ring.R2, cfg.K)
 	weight := 0
@@ -216,6 +220,8 @@ func MakeHint(cfg *params.Cfg, z, r []ring.Rq) []ring.R2 {
 
 // Algorithm 40
 // א
+//
+//go:noinline
 func UseHint(cfg *params.Cfg, h []ring.R2, r []ring.Rq) []ring.Rz {
 	m := int32((params.Q - 1) / (cfg.Gamma2 << 1))
 	v := make([]ring.Rz, cfg.K)

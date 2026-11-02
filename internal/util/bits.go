@@ -22,6 +22,8 @@ func IntegerToBits[T ~uint32](x T, a int) []byte {
 // bitPack takes a slice of k-bit unsigned integers and packs them into a byte slice in lsb order.
 // If entries are signed, they are assumed to be nonnegative
 // א
+//
+//go:inline
 func bitPack[T int32 | uint32](w []T, k uint8) []byte {
 	n := len(w)
 	numBytes := (n*int(k) + 7) >> 3
@@ -171,6 +173,8 @@ func HintBitPack(k, omega uint8, h []ring.R2) []byte {
 // Algorithm 21
 // This is used by signature verification
 // א
+//
+//go:noinline
 func HintBitUnpack(k, omega uint8, y []byte) ([]ring.R2, error) {
 	h := make([]ring.R2, k)
 	index := byte(0)
