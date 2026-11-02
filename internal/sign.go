@@ -44,6 +44,7 @@ func (sk *SigningKey) SignInternal(Mprime, rnd []byte) []byte {
 		y := ring.FromSymmetricVec(util.ExpandMask(cfg, rhopp, kappa))
 		w := util.InvNttVec(util.MatrixVectorNTT(Ahat, util.NttVec(y)))
 		w1_encoded := util.W1Encode(cfg, ring.HighBitsVec(w, cfg.Gamma2))
+		// BUG: deviding by 4 should be >> 2, c_tilde := make([]byte, cfg.Lambda>>2)
 		c_tilde := make([]byte, cfg.Lambda>>4)
 		util.H(c_tilde, append(mu, w1_encoded...))
 		c := util.SampleInBall(cfg, c_tilde)
