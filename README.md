@@ -1,7 +1,6 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE.md)
 
-# apocm-template
-Advanced Programming of Cryptographics Methods course projects template repository.
+# Project X-Terminate
 
 > [!Warning]
 > Do not use this code in real-world implementation.
@@ -13,7 +12,9 @@ Advanced Programming of Cryptographics Methods course projects template reposito
 ## Execution
 
 ## Author
-- Radice Lorenzo @ozneroL541
+Group:  Deep Thought
+- 267234 Marco Egidio Pusceddu @MARCO5P
+- 267646 Radice Lorenzo @ozneroL541
 
 ## License
 Copyright (C) 2026 Lorenzo Radice
