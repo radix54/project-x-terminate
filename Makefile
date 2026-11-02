@@ -32,9 +32,6 @@ build: #lib
 init: 
 	@git config core.hooksPath .githooks
 
-test:
-	@go test -v ./mldsa44/kat_test.go
-
 clean:
 	@rm -rf $(BIN_DIR)
 

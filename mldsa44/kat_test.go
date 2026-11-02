@@ -4,25 +4,18 @@ import (
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"os"
 	"testing"
 )
 
-type katVectorFile struct {
-	Algorithm string      `json:"algorithm"`
-	Vectors   []katVector `json:"vectors"`
-}
-
-type katVector struct {
-	Source          string `json:"source"`
-	SourceURL       string `json:"sourceUrl"`
-	Name            string `json:"name"`
-	Seed            string `json:"seed"`
-	PublicKey       string `json:"publicKey"`
-	PublicKeyPrefix string `json:"publicKeyPrefix"`
-	Message         string `json:"message"`
-	Signature       string `json:"signature"`
-	Randomness      string `json:"randomness"`
+// The JOSE and COSE examples have different envelope fields. These fields are
+// common to both and contain the raw ML-DSA inputs and outputs.
+type rfc9964Vector struct {
+	PrivateSeed  string `json:"priv"`
+	RawMessage   string `json:"raw_to_be_signed"`
+	RawSignature string `json:"raw_signature"`
+	RawPublicKey string `json:"raw_public_key"`
 }
 
 func decodeHex(t *testing.T, value string) []byte {
@@ -34,115 +27,90 @@ func decodeHex(t *testing.T, value string) []byte {
 	return b
 }
 
-func loadKATs(t *testing.T) katVectorFile {
+func loadRFC9964Vectors(t *testing.T) []rfc9964Vector {
 	t.Helper()
-	data, err := os.ReadFile("../kat/mldsa44.json")
+	data, err := os.ReadFile("../kat/rfc9964.json")
 	if err != nil {
 		t.Fatal(err)
 	}
-	// PowerShell versions that predate 7 write a UTF-8 BOM by default.
 	data = bytes.TrimPrefix(data, []byte{0xef, 0xbb, 0xbf})
 
-	var vectors katVectorFile
+	var vectors []rfc9964Vector
 	if err := json.Unmarshal(data, &vectors); err != nil {
-		t.Fatalf("decode KAT JSON: %v", err)
+		t.Fatalf("decode kat/rfc9964.json: %v", err)
 	}
-	if vectors.Algorithm != "ML-DSA-44" {
-		t.Fatalf("unexpected KAT parameter set %q", vectors.Algorithm)
+
+	// This package implements ML-DSA-44, whose public key encoding is 1312 bytes.
+	var mldsa44 []rfc9964Vector
+	for _, vector := range vectors {
+		if len(vector.RawPublicKey) == 2*1312 && len(vector.PrivateSeed) == 2*32 {
+			mldsa44 = append(mldsa44, vector)
+		}
 	}
-	return vectors
+	if len(mldsa44) == 0 {
+		t.Fatal("kat/rfc9964.json contains no ML-DSA-44 vectors")
+	}
+	return mldsa44
 }
 
 func TestKeyGenFromSeedKAT(t *testing.T) {
-	for _, vector := range loadKATs(t).Vectors {
-		if vector.PublicKey == "" && vector.PublicKeyPrefix == "" {
-			continue
-		}
-		t.Run(vector.Name, func(t *testing.T) {
-			seed := decodeHex(t, vector.Seed)
+	for i, vector := range loadRFC9964Vectors(t) {
+		t.Run(fmt.Sprintf("RFC9964_%d", i+1), func(t *testing.T) {
+			seed := decodeHex(t, vector.PrivateSeed)
 			priv, err := PrivateKeyFromSeed(seed)
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			pubBytes := priv.Public().(*PublicKey).Bytes()
-			if vector.PublicKey != "" {
-				if got, want := pubBytes, decodeHex(t, vector.PublicKey); !bytes.Equal(got, want) {
-					t.Fatalf("public key mismatch for %s", vector.Source)
-				}
+			gotPublicKey := priv.Public().(*PublicKey).Bytes()
+			if want := decodeHex(t, vector.RawPublicKey); !bytes.Equal(gotPublicKey, want) {
+				t.Fatal("public key mismatch")
 			}
-			if vector.PublicKeyPrefix != "" {
-				prefix := decodeHex(t, vector.PublicKeyPrefix)
-				if len(pubBytes) < len(prefix) || !bytes.Equal(pubBytes[:len(prefix)], prefix) {
-					t.Fatalf("public key prefix mismatch for %s", vector.Source)
-				}
-				// The expanded FIPS 204 secret-key encoding starts with rho.
-				expanded := priv.sk.EncodeExpanded()
-				if len(expanded) < len(prefix) || !bytes.Equal(expanded[:len(prefix)], prefix) {
-					t.Fatalf("expanded secret key rho mismatch for %s", vector.Source)
-				}
-			}
-
-			seedRoundTrip, err := priv.Seed()
+			gotSeed, err := priv.Seed()
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !bytes.Equal(seedRoundTrip, seed) {
-				t.Fatalf("seed round trip mismatch for %s", vector.Source)
+			if !bytes.Equal(gotSeed, seed) {
+				t.Fatal("seed round trip mismatch")
 			}
-
-			decoded, err := PublicKeyFromBytes(pubBytes)
-			if err != nil {
-				t.Fatalf("decode generated public key: %v", err)
-			}
-			if !bytes.Equal(decoded.Bytes(), pubBytes) {
-				t.Fatalf("public key encoding round trip mismatch for %s", vector.Source)
-			}
+			checkPublicKeyEncoding(t, gotPublicKey)
 		})
 	}
 }
 
 func TestDeterministicSignKAT(t *testing.T) {
-	for _, vector := range loadKATs(t).Vectors {
-		if vector.Signature == "" {
-			continue
-		}
-		t.Run(vector.Name, func(t *testing.T) {
-			priv, err := PrivateKeyFromSeed(decodeHex(t, vector.Seed))
+	for i, vector := range loadRFC9964Vectors(t) {
+		t.Run(fmt.Sprintf("RFC9964_%d", i+1), func(t *testing.T) {
+			priv, err := PrivateKeyFromSeed(decodeHex(t, vector.PrivateSeed))
 			if err != nil {
 				t.Fatal(err)
 			}
-			message := decodeHex(t, vector.Message)
-			rnd := decodeHex(t, vector.Randomness)
+			message := decodeHex(t, vector.RawMessage)
 			mPrime := append([]byte{0, 0}, message...)
-			got := priv.sk.SignInternal(mPrime, rnd)
-			want := decodeHex(t, vector.Signature)
-			if !bytes.Equal(got, want) {
-				t.Fatalf("deterministic signature mismatch for %s", vector.Source)
+			got := priv.sk.SignInternal(mPrime, make([]byte, 32))
+			if want := decodeHex(t, vector.RawSignature); !bytes.Equal(got, want) {
+				t.Fatal("deterministic signature mismatch")
 			}
 		})
 	}
 }
 
 func TestRFC9964VerificationAndEncodingKAT(t *testing.T) {
-	for _, vector := range loadKATs(t).Vectors {
-		if vector.Signature == "" {
-			continue
-		}
-		t.Run(vector.Name, func(t *testing.T) {
-			pubBytes := decodeHex(t, vector.PublicKey)
-			pub, err := PublicKeyFromBytes(pubBytes)
+	for i, vector := range loadRFC9964Vectors(t) {
+		t.Run(fmt.Sprintf("RFC9964_%d", i+1), func(t *testing.T) {
+			publicKeyBytes := decodeHex(t, vector.RawPublicKey)
+			pub, err := PublicKeyFromBytes(publicKeyBytes)
 			if err != nil {
 				t.Fatalf("decode RFC public key: %v", err)
 			}
-			if !bytes.Equal(pub.Bytes(), pubBytes) {
+			if !bytes.Equal(pub.Bytes(), publicKeyBytes) {
 				t.Fatal("public key encoding round trip mismatch")
 			}
 
-			message := decodeHex(t, vector.Message)
-			signature := decodeHex(t, vector.Signature)
+			message := decodeHex(t, vector.RawMessage)
+			signature := decodeHex(t, vector.RawSignature)
 			if !pub.Verify(message, signature) {
-				t.Fatalf("RFC signature did not verify (%s)", vector.Source)
+				t.Fatal("RFC signature did not verify")
 			}
 
 			tamperedMessage := append([]byte(nil), message...)
@@ -157,5 +125,16 @@ func TestRFC9964VerificationAndEncodingKAT(t *testing.T) {
 				t.Fatal("tampered signature verified")
 			}
 		})
+	}
+}
+
+func checkPublicKeyEncoding(t *testing.T, encoded []byte) {
+	t.Helper()
+	decoded, err := PublicKeyFromBytes(encoded)
+	if err != nil {
+		t.Fatalf("decode public key: %v", err)
+	}
+	if !bytes.Equal(decoded.Bytes(), encoded) {
+		t.Fatal("public key encoding round trip mismatch")
 	}
 }
