@@ -42,12 +42,12 @@ test: build
 # BINSEC prints a status even when it aborts on an error, so check for that too.
 binsec: image
 	@for config in binsec/*.ini; do \
-		out=$$($(CONTAINER) $(BINSEC) -sse-script $$config -file build/target 2>&1); \
+		out=$$($(CONTAINER) $(BINSEC) -sse-script $$config -file $(BIN) 2>&1); \
 		status=$$(echo "$$out" | sed -n 's/.*Program status is : \([a-z]*\).*/\1/p'); \
 		echo "$$out" | grep -q 'Fatal error' && status=error; \
 		printf '%-30s %s\n' $$config "$${status:-error}"; \
 		for addr in $$(echo "$$out" | grep -oE 'Instruction 0x[0-9a-f]+' | cut -d' ' -f2); do \
-			echo "    leak at $$(echo $$addr | go tool addr2line build/target | sed -n '2s|^timinglab/||p')"; \
+			echo "    leak at $$(echo $$addr | go tool addr2line $(BIN) | sed -n '2s|^timinglab/||p')"; \
 		done; \
 	done
 
@@ -56,6 +56,10 @@ image:
 	@$(ENGINE) image inspect $(IMAGE) >/dev/null 2>&1 || $(ENGINE) pull $(IMAGE)
 
 check: image
-	$(CONTAINER) $(BINSEC) -sse-script $(CONFIG) -file build/target
+	$(CONTAINER) $(BINSEC) -sse-script $(CONFIG) -file $(BIN)
 
+line:
+	echo $(ADDR) | go tool addr2line $(BIN)
 
+disasm:
+	go tool objdump -s 'main\.$(FUNC)$$' $(BIN)
