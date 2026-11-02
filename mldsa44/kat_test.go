@@ -18,6 +18,8 @@ type rfc9964Vector struct {
 	RawPublicKey string `json:"raw_public_key"`
 }
 
+const rfc9964VectorFile string = "../kat/rfc9964.json"
+
 func decodeHex(t *testing.T, value string) []byte {
 	t.Helper()
 	b, err := hex.DecodeString(value)
@@ -29,7 +31,7 @@ func decodeHex(t *testing.T, value string) []byte {
 
 func loadRFC9964Vectors(t *testing.T) []rfc9964Vector {
 	t.Helper()
-	data, err := os.ReadFile("../kat/rfc9964.json")
+	data, err := os.ReadFile(rfc9964VectorFile)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,7 +39,7 @@ func loadRFC9964Vectors(t *testing.T) []rfc9964Vector {
 
 	var vectors []rfc9964Vector
 	if err := json.Unmarshal(data, &vectors); err != nil {
-		t.Fatalf("decode kat/rfc9964.json: %v", err)
+		t.Fatalf("decode file: %v", err)
 	}
 
 	// This package implements ML-DSA-44, whose public key encoding is 1312 bytes.
@@ -48,7 +50,7 @@ func loadRFC9964Vectors(t *testing.T) []rfc9964Vector {
 		}
 	}
 	if len(mldsa44) == 0 {
-		t.Fatal("kat/rfc9964.json contains no ML-DSA-44 vectors")
+		t.Fatal("file contains no ML-DSA-44 vectors")
 	}
 	return mldsa44
 }

@@ -45,6 +45,8 @@ func (vk *VerifyingKey) Bytes() []byte {
 
 // Algorithm 23
 // א
+//
+//go:noinline
 func PkDecode(cfg *params.Cfg, pk []byte) (*VerifyingKey, error) {
 	rho := pk[:32]
 	z := pk[32:]
@@ -132,6 +134,8 @@ func SkDecode(cfg *params.Cfg, sk []byte) (*SigningKey, error) {
 // Algorithm 24
 // We do not recommend actually ever using this. Store the seed instead.
 // א
+//
+//go:noinline
 func (sk SigningKey) EncodeExpanded() []byte {
 	encoded := append(sk.rho[:], sk.K[:]...)
 	encoded = append(encoded, sk.tr[:]...)

@@ -85,6 +85,8 @@ func (a T) Mul(b T) T {
 // and r0 \in (-2^(d-1), 2^(d-1)].
 // r1 is then in the range [0, q/2^d), which is 10 bits
 // א
+//
+//go:noinline
 func (a T) Power2Round() (int32, int32) {
 	r0 := int32(a.reduced) & ((1 << d) - 1)
 
@@ -101,6 +103,8 @@ func (a T) Power2Round() (int32, int32) {
 // -gamma2 < r0 <= gamma2
 // 0 <= r1 < (q-1)/(2 * gamma2)
 // א
+//
+//go:noinline
 func (a T) Decompose(gamma2 uint32) (r1 int32, r0 int32) {
 
 	r := int32(a.Reduced())
@@ -183,6 +187,8 @@ func FromHalfByte(eta int, b byte) *T {
 // Inputs: 3 bytes
 // Output: integer mod q or nil for rejection
 // א
+//
+//go:noinline
 func FromThreeBytes(b0, b1, b2 byte) *T {
 	var r T
 	bp2 := uint32(b2 & 0x7f)

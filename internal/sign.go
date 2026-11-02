@@ -20,6 +20,8 @@ import (
 //
 // Returns a signature as a []byte
 // א
+//
+//go:noinline
 func (sk *SigningKey) SignInternal(Mprime, rnd []byte) []byte {
 	cfg := sk.cfg
 	s1hat := util.NttVec(sk.s1)
@@ -112,6 +114,8 @@ func (sk *SigningKey) Sign(message []byte) ([]byte, error) {
 // Returns true if the signature is valid.
 // Returns false otherwise (even if an error occurs).
 // א
+//
+//go:noinline
 func (pk *VerifyingKey) VerifyInternal(Mprime, sigma []byte) bool {
 	cfg := pk.cfg
 	c_tilde, z, h, err := util.SigDecode(cfg, sigma)
