@@ -1,3 +1,3 @@
-module ex_04_01
+module ml-dsa
 
-go 1.27.3
+go 1.24
