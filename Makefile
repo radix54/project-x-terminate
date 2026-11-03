@@ -62,4 +62,4 @@ line:
 	echo $(ADDR) | go tool addr2line $(BIN)
 
 disasm:
-	go tool objdump -s 'main\.$(FUNC)$$' $(BIN)
+	go tool objdump -s '$(FUNC)$$' $(BIN)
