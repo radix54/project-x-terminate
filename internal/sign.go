@@ -156,7 +156,7 @@ func (pk *VerifyingKey) VerifyInternal(Mprime, sigma []byte) bool {
 
 	bound := (1 << cfg.LogGamma1) - uint32(cfg.Beta)
 
-	//BUG: should return false if z_inf >= bound.
+	// BUG: should return false if z_inf >= bound.
 	//if z_inf > bound {
 	// FIX
 	if z_inf >= bound {
