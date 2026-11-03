@@ -114,33 +114,18 @@ func (a T) Decompose(gamma2 uint32) (r1 int32, r0 int32) {
 
 	r += q & (r >> 31)
 
-	// Center r around 0 (map to range [-(q-1)/2, (q-1)/2])
-	mask := -((r - (q-1)/2 - 1) >> 31)
-	r -= q & mask
+	// BUG: The previous centering mask did not compute r0 = r+ mod±(2*gamma2).
+	// Fix: take the remainder directly; mod± is in (-gamma2, gamma2].
+	r0 = r % twoGamma2
+	adjust := subtle.ConstantTimeLessOrEq(int(gamma2Int)+1, int(r0))
+	r0 -= int32(-adjust) & twoGamma2
 
-	// Compute r1 = round(r/alpha) with ties broken towards zero
-	// For r >= 0: r1 = (r + gamma2Int) / twoGamma2
-	// For r < 0:  r1 = (r - gamma2Int + 1) / twoGamma2
-	signMask := r >> 31
-	offset := gamma2Int + (signMask & (-gamma2Int + 1))
-	r1 = (r + offset) / twoGamma2
-
-	// Compute r0 = r - r1*twoGamma2
-	r0 = r - r1*twoGamma2
-
-	// Adjust r1 if r0 is too large (branch-free)
-	// If r0 > gamma2Int: r1++, r0 -= twoGamma2
-	// If r0 < -gamma2Int: r1--, r0 += twoGamma2
-
-	// Check if r0 > alpha/2
-	adjustUp := -((r0 - gamma2Int - 1) >> 31)
-	r1 += adjustUp & 1
-	r0 -= adjustUp & twoGamma2
-
-	// Check if r0 < -gamma2Int
-	adjustDown := -((-r0 - gamma2Int - 1) >> 31)
-	r1 -= adjustDown & 1
-	r0 += adjustDown & twoGamma2
+	// BUG: The previous rounding/correction path omitted the q-1 wraparound
+	// case. Fix: when r+ - r0 == q-1, set r1 to 0 and decrement r0.
+	difference := r - r0
+	wrap := subtle.ConstantTimeEq(difference, int32(q-1))
+	r1 = (difference / twoGamma2) &^ int32(-wrap)
+	r0 -= int32(wrap)
 
 	return r1, r0
 }
