@@ -1,5 +1,6 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE.md)
 [![Tests](https://github.com/radix54/project-x-terminate/actions/workflows/test.yml/badge.svg)](https://github.com/radix54/project-x-terminate/actions/workflows/test.yml)
+[![Static Checks](https://github.com/radix54/project-x-terminate/actions/workflows/static_check.yml/badge.svg)](https://github.com/radix54/project-x-terminate/actions/workflows/static_check.yml)
 
 [![Marks](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fradix54%2Fproject-x-terminate%2Fmaster%2F.github%2Fbadges%2Fanalyze.json)](https://github.com/radix54/project-x-terminate/actions/workflows/analyze.yml)
 [![Bugs fixed](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fradix54%2Fproject-x-terminate%2Fmaster%2F.github%2Fbadges%2Ffixed_bugs.json)](https://github.com/radix54/project-x-terminate/actions/workflows/bug_fixed.yml)
