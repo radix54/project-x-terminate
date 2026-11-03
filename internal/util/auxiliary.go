@@ -205,7 +205,7 @@ func makeHint(cfg *params.Cfg, z, r field.T) uint8 {
 //
 //go:noinline
 func MakeHint(cfg *params.Cfg, z, r []ring.Rq) []ring.R2 {
-	//
+	// ANALYZED
 	hints := make([]ring.R2, cfg.K)
 	weight := 0
 	for i := range cfg.K {
