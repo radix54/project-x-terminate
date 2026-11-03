@@ -25,7 +25,7 @@ func IntegerToBits[T ~uint32](x T, a int) []byte {
 //
 //go:noinline
 func bitPack[T int32 | uint32](w []T, k uint8) []byte {
-	//
+	// ANALYZED
 	n := len(w)
 	numBytes := (n*int(k) + 7) >> 3
 	z := make([]byte, numBytes)

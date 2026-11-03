@@ -23,7 +23,7 @@ import (
 //
 //go:noinline
 func (sk *SigningKey) SignInternal(Mprime, rnd []byte) []byte {
-	//
+	// ANALYZED
 	cfg := sk.cfg
 	s1hat := util.NttVec(sk.s1)
 	s2hat := util.NttVec(sk.s2)
