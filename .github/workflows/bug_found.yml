@@ -36,7 +36,7 @@ jobs:
                   percentage=""$bugs"/"$marks""
 
                   mkdir -p .github/badges
-                  printf '{"schemaVersion":1,"label":"Bugs Found","message":"%s%%","color":"red"}\n' "$percentage" > .github/badges/bugs.json
+                  printf '{"schemaVersion":1,"label":"Bugs Found","message":"%s%","color":"red"}\n' "$percentage" > .github/badges/bugs.json
                   git add .github/badges/bugs.json
 
                   if git diff --cached --quiet; then
