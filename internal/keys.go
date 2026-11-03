@@ -146,7 +146,7 @@ func SkDecode(cfg *params.Cfg, sk []byte) (*SigningKey, error) {
 //
 //go:noinline
 func (sk SigningKey) EncodeExpanded() []byte {
-	//
+	// ANALYZED
 	encoded := append(sk.rho[:], sk.K[:]...)
 	encoded = append(encoded, sk.tr[:]...)
 
