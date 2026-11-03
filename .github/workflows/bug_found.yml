@@ -1,0 +1,29 @@
+name: Analyzed Functions
+
+on:
+    push:
+
+env:
+    MARK: א
+    BUG: BUG
+        
+        
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+
+            - name: Count how many marks in the code
+              run: |
+                marks=$(grep -o '$(MARK)' $(git ls-files '*.go') | wc -l)
+
+            - name: Count how many bugs in the code
+              run: |
+                bugs=$(grep -o '$(BUG)' $(git ls-files '*.go') | wc -l)
+
+            - name: Percetage of bugs in the code
+              run: |
+                percentage=$(echo "scale=2; ($bugs / $marks) * 100" | bc)

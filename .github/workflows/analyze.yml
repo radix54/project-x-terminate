@@ -1,0 +1,19 @@
+name: Analyzed Functions
+
+on:
+    push:
+
+env:
+    MARK: א
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+
+            - name: Count how many marks in the code
+              run: |
+                count=$(grep -o '$(MARK)' $(git ls-files '*.go') | wc -l)
