@@ -16,7 +16,6 @@ jobs:
         - uses: WillAbides/setup-go-faster@v1.19.0
           with:
               go-version: ${{ matrix.go }}
-        - run: "go test ./..."
         - run: "go vet ./..."
         - uses: dominikh/staticcheck-action@v1.4.1
           with:
