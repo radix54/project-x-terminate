@@ -88,6 +88,7 @@ func (a T) Mul(b T) T {
 //
 //go:noinline
 func (a T) Power2Round() (int32, int32) {
+	//ANALYZED
 	r0 := int32(a.reduced) & ((1 << d) - 1)
 
 	if r0 > 1<<(d-1) {
