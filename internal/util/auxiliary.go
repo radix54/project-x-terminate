@@ -225,6 +225,7 @@ func MakeHint(cfg *params.Cfg, z, r []ring.Rq) []ring.R2 {
 //
 //go:noinline
 func UseHint(cfg *params.Cfg, h []ring.R2, r []ring.Rq) []ring.Rz {
+	// ANALYZED
 	m := int32((params.Q - 1) / (cfg.Gamma2 << 1))
 	v := make([]ring.Rz, cfg.K)
 	for i := range cfg.K {
