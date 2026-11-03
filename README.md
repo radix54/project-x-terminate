@@ -26,15 +26,15 @@ The following functions:
 - auxiliary.go/UseHint
 - bits.go/HintBitUnpack 
 
-work on only public inputs, so no further investigation on the security is required.
+work on only public inputs, so no further investigation on the security is required.  
+Moreover, we noticed that bits.go/bitPack does not leak any information about w even when w is secret (k instead is public). Indeed, the operations made on w are built-in in go and are costant-tyme on same input length, and the for loop iterates on the length of w which is fixed (hence public). So we consider it as secure.
 
 ## With Binsec:
 We constructed the usual .ini files for the functions that worked on non public inputs
 - field.go/Decompose: proven secure
 - keys.go/EncodeExpanded: proven secure
 - auxiliary.go/MakeHint: proven secure
-- sign.go/SignInternal:
-- bits.go/bitPack: 
+- sign.go/SignInternal: unknown
 
 ## Author
 Group:  Deep Thought
