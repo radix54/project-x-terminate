@@ -4,14 +4,16 @@ on:
     push:
 
 env:
-    MARK: א
-    BUG: BUG
-    FIXED: FIX
+    MARK: "א"
+    BUG: "BUG"
+    FIXED: "FIX"
         
         
 jobs:
     test:
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
 
         steps:
             - name: Checkout
@@ -28,3 +30,16 @@ jobs:
             - name: Percetage of bugs in the code
               run: |
                 percentage=$(echo "scale=2; ($fixed / $bugs) * 100" | bc)
+
+            - name: Create badge
+              run: |
+                mkdir -p .github/badges
+                printf '{"schemaVersion":1,"label":"Fixed Bugs","message":"%s%%",'
+                printf '"color":"green"}\n' "$percentage" > .github/badges/fixed_bugs.json
+                git config user.name "github-actions[bot]"
+                git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                git add .github/badges/fixed_bugs.json
+                if ! git diff --cached --quiet; then
+                  git commit -m "Update fixed bugs badge"
+                  git push
+                fi

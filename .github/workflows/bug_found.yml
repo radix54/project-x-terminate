@@ -4,13 +4,15 @@ on:
     push:
 
 env:
-    MARK: א
-    BUG: BUG
+    MARK: "א"
+    BUG: "BUG"
         
         
 jobs:
     test:
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
 
         steps:
             - name: Checkout
@@ -27,3 +29,16 @@ jobs:
             - name: Percetage of bugs in the code
               run: |
                 percentage=$(echo "scale=2; ($bugs / $marks) * 100" | bc)
+
+            - name: Create badge
+              run: |
+                mkdir -p .github/badges
+                printf '{"schemaVersion":1,"label":"Bugs","message":"%s%%","color":"red"}\n' "$percentage" > .github/badges/bugs.json
+
+                git config user.name "github-actions[bot]"
+                git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                git add .github/badges/bugs.json
+                if ! git diff --cached --quiet; then
+                  git commit -m "Update bugs badge"
+                  git push
+                fi
