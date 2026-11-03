@@ -2,13 +2,16 @@ name: Fixed Bugs
 
 on:
     push:
+        branches: [ "master" ]
+
+concurrency:
+    group: fixed-bugs-badge-${{ github.ref }}
+    cancel-in-progress: false
 
 env:
-    MARK: "א"
     BUG: "BUG"
     FIXED: "FIX"
-        
-        
+
 jobs:
     count:
         runs-on: ubuntu-latest
@@ -19,27 +22,34 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v7
 
-            - name: Count how many bugs in the code
-              run: |
-                bugs=$(git grep -o -F "$BUG" -- '*.go' | wc -l | tr -d '[:space:]')
-
-            - name: Count how many fixed bugs in the code
-              run: |
-                fixed=$(git grep -o -F "$FIXED" -- '*.go' | wc -l | tr -d '[:space:]')
-
-            - name: Percetage of bugs in the code
-              run: |
-                percentage=$(echo "scale=2; ($fixed / $bugs) * 100" | bc)
-
             - name: Create badge
               run: |
-                mkdir -p .github/badges
-                printf '{"schemaVersion":1,"label":"Fixed Bugs","message":"%s%%",'
-                printf '"color":"green"}\n' "$percentage" > .github/badges/fixed_bugs.json
                 git config user.name "github-actions[bot]"
                 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-                git add .github/badges/fixed_bugs.json
-                if ! git diff --cached --quiet; then
+
+                for attempt in 1 2 3 4 5; do
+                  git fetch origin master
+                  git reset --hard origin/master
+
+                  bugs=$(git grep -o -F "$BUG" -- '*.go' | wc -l | tr -d '[:space:]')
+                  fixed=$(git grep -o -F "$FIXED" -- '*.go' | wc -l | tr -d '[:space:]')
+                  percentage=$(awk -v fixed="$fixed" -v bugs="$bugs" 'BEGIN { if (bugs == 0) print "0.00"; else printf "%.2f", fixed * 100 / bugs }')
+
+                  mkdir -p .github/badges
+                  printf '{"schemaVersion":1,"label":"Fixed Bugs","message":"%s%%","color":"green"}\n' "$percentage" > .github/badges/fixed_bugs.json
+                  git add .github/badges/fixed_bugs.json
+
+                  if git diff --cached --quiet; then
+                    exit 0
+                  fi
+
                   git commit -m "Update fixed bugs badge"
-                  git push
-                fi
+                  if git push origin HEAD:master; then
+                    exit 0
+                  fi
+
+                  sleep 2
+                done
+
+                echo "Could not publish fixed bugs badge after 5 attempts" >&2
+                exit 1
