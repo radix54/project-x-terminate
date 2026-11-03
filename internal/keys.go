@@ -46,15 +46,15 @@ func (vk *VerifyingKey) Bytes() []byte {
 // Algorithm 23
 // א
 //
-// analyzed ✓
 //go:noinline
 func PkDecode(cfg *params.Cfg, pk []byte) (*VerifyingKey, error) {
+	// ANALYZED
 	// error handling: Check len(pk) == int(cfg.PkSize) and return an error; short inputs can panic, while long inputs have trailing bytes ignored.
 	rho := pk[:32]
 	z := pk[32:]
 
 	t1 := make([]ring.Rq, cfg.K)
-	elemLen := int(10*params.N) >> 3  // = 32(bitlen(q-1)-d)
+	elemLen := int(10*params.N) >> 3 // = 32(bitlen(q-1)-d)
 	for i := range cfg.K {
 		// z[i] in the documentation is a block of elemLen bytes.
 		t1[i] = ring.FromSymmetric(util.SimpleBitUnpack(z[:elemLen], 10))

@@ -21,9 +21,9 @@ import (
 // Returns a signature as a []byte
 // א
 //
-// analyzed ✓
 //go:noinline
 func (sk *SigningKey) SignInternal(Mprime, rnd []byte) []byte {
+	// ANALYZED
 	cfg := sk.cfg
 	s1hat := util.NttVec(sk.s1)
 	s2hat := util.NttVec(sk.s2)
@@ -116,9 +116,9 @@ func (sk *SigningKey) Sign(message []byte) ([]byte, error) {
 // Returns false otherwise (even if an error occurs).
 // א
 //
-// analyzed ✓
 //go:noinline
 func (pk *VerifyingKey) VerifyInternal(Mprime, sigma []byte) bool {
+	// ANALYZED
 	cfg := pk.cfg
 	c_tilde, z, h, err := util.SigDecode(cfg, sigma)
 	if err != nil {
