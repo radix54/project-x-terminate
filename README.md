@@ -17,7 +17,22 @@
 We reviewed and corrected all flagged functions to ensure formal equivalence with the corresponding algorithms in the ML-DSA documentation (FIPS 204). [https://csrc.nist.gov/pubs/fips/204/final].
 
 ## On the analysis of the flagged functions
-keys.go/PkDecode; field.go/Power2Round; sign.go/VerifyInternal; feld.go/FromThreeBytes; auxiliary.go/SigDecode; auxiliary.go/UseHint; bits.go/HintBitUnpack work on only public inputs, so no further investigation on the security is required. 
+The following functions:
+- keys.go/PkDecode
+- field.go/Power2Round
+- sign.go/VerifyInternal 
+- feld.go/FromThreeBytes
+- auxiliary.go/SigDecode
+- auxiliary.go/UseHint
+- bits.go/HintBitUnpack /n
+work on only public inputs, so no further investigation on the security is required.
+## With Binsec:
+We constructed the usual .ini files for the functions that worked on non public inputs
+- field.go/Decompose: proven secure
+- keys.go/EncodeExpanded: proven secure
+- auxiliary.go/MakeHint: proven secure
+- sign.go/SignInternal:
+- bits.go/bitPack: 
 
 ## Author
 Group:  Deep Thought
