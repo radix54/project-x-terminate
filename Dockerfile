@@ -19,4 +19,4 @@ COPY kat/ kat/
 # Build the application
 RUN make build
 
-ENTRYPOINT [ "make", "run", ";", "make", "test" ]
+ENTRYPOINT [ "make", "run_test" ]

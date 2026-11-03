@@ -38,6 +38,10 @@ clean:
 test: build
 	@go test -v ./mldsa44
 
+run_test: build
+	@make run
+	@make test
+
 # make check on every configuration, then make line for each leak; one line per verdict.
 # BINSEC prints a status even when it aborts on an error, so check for that too.
 binsec: image
@@ -57,7 +61,6 @@ image:
 
 check: image
 	$(CONTAINER) $(BINSEC) -sse-script $(CONFIG) -file $(BIN)
-
 
 disasm:
 	go tool objdump -s '$(FUNC)$$' $(BIN)
