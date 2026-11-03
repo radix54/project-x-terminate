@@ -2,6 +2,11 @@ name: Analyzed Functions
 
 on:
     push:
+        branches: [ "master" ]
+
+concurrency:
+    group: analyze-badge-${{ github.ref }}
+    cancel-in-progress: false
 
 env:
     MARK: "א"
@@ -16,19 +21,33 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v7
 
-            - name: Count marks
-              run: |
-                count=$(git grep -o -F "$MARK" -- '*.go' | wc -l | tr -d '[:space:]')
-
             - name: Create badge
               run: |
-                mkdir -p .github/badges
-                printf '{"schemaVersion":1,"label":"Marks","message":"%s","color":"blue"}\n' "$count" > .github/badges/analyze.json
-
                 git config user.name "github-actions[bot]"
                 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-                git add .github/badges/analyze.json
-                if ! git diff --cached --quiet; then
+
+                for attempt in 1 2 3 4 5; do
+                  # Start from the latest master so another push cannot make
+                  # this badge commit stale.
+                  git fetch origin master
+                  git reset --hard origin/master
+
+                  count=$(git grep -o -F "$MARK" -- '*.go' | wc -l | tr -d '[:space:]')
+                  mkdir -p .github/badges
+                  printf '{"schemaVersion":1,"label":"Marks","message":"%s","color":"blue"}\n' "$count" > .github/badges/analyze.json
+                  git add .github/badges/analyze.json
+
+                  if git diff --cached --quiet; then
+                    exit 0
+                  fi
+
                   git commit -m "Update analyzed marks badge"
-                  git push
-                fi
+                  if git push origin HEAD:master; then
+                    exit 0
+                  fi
+
+                  sleep 2
+                done
+
+                echo "Could not publish badge after 5 attempts" >&2
+                exit 1
