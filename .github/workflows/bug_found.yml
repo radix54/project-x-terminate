@@ -9,7 +9,7 @@ env:
         
         
 jobs:
-    test:
+    count:
         runs-on: ubuntu-latest
         permissions:
             contents: write
@@ -20,11 +20,11 @@ jobs:
 
             - name: Count how many marks in the code
               run: |
-                marks=$(grep -o '$(MARK)' $(git ls-files '*.go') | wc -l)
+                marks=$(git grep -o -F "$MARK" -- '*.go' | wc -l | tr -d '[:space:]')
 
             - name: Count how many bugs in the code
               run: |
-                bugs=$(grep -o '$(BUG)' $(git ls-files '*.go') | wc -l)
+                bugs=$(git grep -o -F "$BUG" -- '*.go' | wc -l | tr -d '[:space:]')
 
             - name: Percetage of bugs in the code
               run: |

@@ -10,7 +10,7 @@ env:
         
         
 jobs:
-    test:
+    count:
         runs-on: ubuntu-latest
         permissions:
             contents: write
@@ -21,11 +21,11 @@ jobs:
 
             - name: Count how many bugs in the code
               run: |
-                bugs=$(grep -o '$(BUG)' $(git ls-files '*.go') | wc -l)
+                bugs=$(git grep -o -F "$BUG" -- '*.go' | wc -l | tr -d '[:space:]')
 
             - name: Count how many fixed bugs in the code
               run: |
-                fixed=$(grep -o '$(FIXED)' $(git ls-files '*.go') | wc -l)
+                fixed=$(git grep -o -F "$FIXED" -- '*.go' | wc -l | tr -d '[:space:]')
 
             - name: Percetage of bugs in the code
               run: |

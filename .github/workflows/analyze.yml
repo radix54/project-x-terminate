@@ -7,7 +7,7 @@ env:
     MARK: "א"
 
 jobs:
-    test:
+    count:
         runs-on: ubuntu-latest
         permissions:
             contents: write
