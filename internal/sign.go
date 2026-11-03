@@ -50,6 +50,7 @@ func (sk *SigningKey) SignInternal(Mprime, rnd []byte) []byte {
 
 		// BUG: deviding by 4 should be >> 2, c_tilde := make([]byte, cfg.Lambda>>2)
 		//c_tilde := make([]byte, cfg.Lambda>>4)
+		// FIX
 		c_tilde := make([]byte, cfg.Lambda>>2)
 
 		util.H(c_tilde, append(mu, w1_encoded...))
@@ -156,7 +157,10 @@ func (pk *VerifyingKey) VerifyInternal(Mprime, sigma []byte) bool {
 	bound := (1 << cfg.LogGamma1) - uint32(cfg.Beta)
 
 	//BUG: should return false if z_inf >= bound.
-	if z_inf > bound {
+	//if z_inf > bound {
+	// FIX
+	if z_inf >= bound {
+
 		return false
 	}
 	for i := range len(c_tilde) {
