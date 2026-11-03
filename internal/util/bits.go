@@ -25,6 +25,7 @@ func IntegerToBits[T ~uint32](x T, a int) []byte {
 //
 //go:inline
 func bitPack[T int32 | uint32](w []T, k uint8) []byte {
+	// ANALYZED
 	n := len(w)
 	numBytes := (n*int(k) + 7) >> 3
 	z := make([]byte, numBytes)
@@ -39,7 +40,12 @@ func bitPack[T int32 | uint32](w []T, k uint8) []byte {
 		j := k // number of bits left to store in the current value
 
 		for l <= j {
-			z[m] &= byte(v << (8 - l)) // bytes fill from the lsb to the msb
+
+			// BUG: This should be |=, not &=
+			//z[m] &= byte(v << (8 - l)) // bytes fill from the lsb to the msb
+			// FIX
+			z[m] |= byte(v << (8 - l))
+
 			v >>= l
 			j -= l
 			m += 1
@@ -176,7 +182,7 @@ func HintBitPack(k, omega uint8, h []ring.R2) []byte {
 //
 //go:noinline
 func HintBitUnpack(k, omega uint8, y []byte) ([]ring.R2, error) {
-	// ANNALYZED
+	// ANALYZED
 	h := make([]ring.R2, k)
 	index := byte(0)
 	for i := range k {
@@ -186,8 +192,12 @@ func HintBitUnpack(k, omega uint8, y []byte) ([]ring.R2, error) {
 		first := index
 		for index < y[omega+i] {
 			if index > first {
+
 				// BUG: This check should be >=
-				if y[index-1] > y[index] {
+				//if y[index-1] > y[index] {
+				// FIX
+				if y[index-1] >= y[index] {
+
 					return nil, errors.New("malformed input")
 				}
 			}
@@ -196,6 +206,13 @@ func HintBitUnpack(k, omega uint8, y []byte) ([]ring.R2, error) {
 			index++
 		}
 	}
-	//BUG: Add check for y[i] = 0
+	// BUG: Add check for y[i] = 0
+	// FIX
+	for i := index; i < omega; i++ {
+		if y[i] != 0 {
+			return nil, errors.New("malformed input")
+		}
+	}
+
 	return h, nil
 }

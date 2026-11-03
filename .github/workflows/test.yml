@@ -21,6 +21,4 @@ jobs:
 
             - name: Run Tests
               run: |
-                if git ls-files --recurse-submodules -- '*_test.go' | grep -q .; then
-                  go test -v ./...
-                fi
+                make test

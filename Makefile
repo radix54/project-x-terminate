@@ -36,7 +36,7 @@ clean:
 	@rm -rf $(BIN_DIR)
 
 test: build
-	@go test ./mldsa44/kat_test.go
+	@go test -v ./mldsa44
 
 # make check on every configuration, then make line for each leak; one line per verdict.
 # BINSEC prints a status even when it aborts on an error, so check for that too.

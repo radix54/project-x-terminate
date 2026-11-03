@@ -47,8 +47,12 @@ func (sk *SigningKey) SignInternal(Mprime, rnd []byte) []byte {
 		y := ring.FromSymmetricVec(util.ExpandMask(cfg, rhopp, kappa))
 		w := util.InvNttVec(util.MatrixVectorNTT(Ahat, util.NttVec(y)))
 		w1_encoded := util.W1Encode(cfg, ring.HighBitsVec(w, cfg.Gamma2))
+
 		// BUG: deviding by 4 should be >> 2, c_tilde := make([]byte, cfg.Lambda>>2)
-		c_tilde := make([]byte, cfg.Lambda>>4)
+		//c_tilde := make([]byte, cfg.Lambda>>4)
+		// FIX
+		c_tilde := make([]byte, cfg.Lambda>>2)
+
 		util.H(c_tilde, append(mu, w1_encoded...))
 		c := util.SampleInBall(cfg, c_tilde)
 		c_hat := util.NTT(ring.FromSymmetric(c))
@@ -153,7 +157,10 @@ func (pk *VerifyingKey) VerifyInternal(Mprime, sigma []byte) bool {
 	bound := (1 << cfg.LogGamma1) - uint32(cfg.Beta)
 
 	//BUG: should return false if z_inf >= bound.
-	if z_inf > bound {
+	//if z_inf > bound {
+	// FIX
+	if z_inf >= bound {
+
 		return false
 	}
 	for i := range len(c_tilde) {

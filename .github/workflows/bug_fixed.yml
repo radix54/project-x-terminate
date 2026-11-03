@@ -36,7 +36,7 @@ jobs:
                   percentage=$(awk -v fixed="$fixed" -v bugs="$bugs" 'BEGIN { if (bugs == 0) print "0.00"; else printf "%.2f", fixed * 100 / bugs }')
 
                   mkdir -p .github/badges
-                  printf '{"schemaVersion":1,"label":"Fixed Bugs","message":"%s%%","color":"blue"}\n' "$percentage" > .github/badges/fixed_bugs.json
+                  printf '{"schemaVersion":1,"label":"Fixed Bugs","message":"%s%%","color":"green"}\n' "$percentage" > .github/badges/fixed_bugs.json
                   git add .github/badges/fixed_bugs.json
 
                   if git diff --cached --quiet; then
