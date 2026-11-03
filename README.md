@@ -1,5 +1,6 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE.md)
 [![Latest Release](https://img.shields.io/github/v/release/radix54/project-x-terminate)](https://github.com/radix54/project-x-terminate/releases/latest)
+
 [![Tests](https://github.com/radix54/project-x-terminate/actions/workflows/test.yml/badge.svg)](https://github.com/radix54/project-x-terminate/actions/workflows/test.yml)
 [![Static Checks](https://github.com/radix54/project-x-terminate/actions/workflows/static_check.yml/badge.svg)](https://github.com/radix54/project-x-terminate/actions/workflows/static_check.yml)
 
