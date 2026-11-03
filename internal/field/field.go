@@ -252,12 +252,12 @@ func DivBarrett(numerator, denominator uint32) (uint32, uint32) {
 }
 
 // For signed integers:
-func divBarrettSigned(numerator, denominator int32) (int32, int32) {
-	un := uint32(numerator)
-	ud := uint32(denominator)
-	quo, r := DivBarrett(un, ud)
-	return int32(quo), int32(r)
-}
+//func divBarrettSigned(numerator, denominator int32) (int32, int32) {
+//	un := uint32(numerator)
+//	ud := uint32(denominator)
+//	quo, r := DivBarrett(un, ud)
+//	return int32(quo), int32(r)
+//}
 
 // Modification of https://en.wikipedia.org/wiki/Division_algorithm#Integer_division_(unsigned)_with_remainder
 // Except with branchless, conditional swaps
