@@ -10,6 +10,7 @@ concurrency:
 
 env:
     MARK: "א"
+    ANALYZED: "ANALYZED"
 
 jobs:
     count:
@@ -33,15 +34,17 @@ jobs:
                   git reset --hard origin/master
 
                   count=$(git grep -o -F "$MARK" -- '*.go' | wc -l | tr -d '[:space:]')
+                  analyzed=$(git grep -o -F "$ANALYZED" -- '*.go' | wc -l | tr -d '[:space:]')
+                  percentage=$(awk -v analyzed="$analyzed" -v count="$count" 'BEGIN { if (count == 0) print "0.00"; else printf "%.2f", analyzed * 100 / count }')
                   mkdir -p .github/badges
-                  printf '{"schemaVersion":1,"label":"Marks","message":"%s","color":"blue"}\n' "$count" > .github/badges/analyze.json
+                  printf '{"schemaVersion":1,"label":"Analyzed Functions","message":"%s%%","color":"blue"}\n' "$percentage" > .github/badges/analyze.json
                   git add .github/badges/analyze.json
 
                   if git diff --cached --quiet; then
                     exit 0
                   fi
 
-                  git commit -m "Update analyzed marks badge"
+                  git commit -m "Update analyzed analyze badge"
                   if git push origin HEAD:master; then
                     exit 0
                   fi
