@@ -23,7 +23,7 @@ func IntegerToBits[T ~uint32](x T, a int) []byte {
 // If entries are signed, they are assumed to be nonnegative
 // א
 //
-//go:inline
+//go:noinline
 func bitPack[T int32 | uint32](w []T, k uint8) []byte {
 	// ANALYZED
 	n := len(w)
