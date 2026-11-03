@@ -10,16 +10,13 @@ COPY go.* ./
 COPY Makefile ./
 
 # Copy the source code
+COPY mldsa44/ mldsa44/
+COPY internal/ internal/
 COPY cmd/*.go cmd/
-COPY *.go ./
+# KAT
+COPY kat/ kat/
 
 # Build the application
 RUN make build
 
-FROM alpine:3.22
-RUN addgroup -S app && adduser -S -G app app
-USER app
-WORKDIR /app
-COPY --from=builder /app/bin/* .
-
-ENTRYPOINT []
+ENTRYPOINT [ "make", "run", ";", "make", "test" ]
