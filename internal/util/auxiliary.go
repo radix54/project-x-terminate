@@ -214,10 +214,14 @@ func MakeHint(cfg *params.Cfg, z, r []ring.Rq) []ring.R2 {
 			weight += int(hints[i][j])
 		}
 	}
-	if weight > int(cfg.Omega) {
-		return nil
-	}
-	return hints
+	// BUG: not constant time comparison
+	//if weight > int(cfg.Omega) {
+	//	return nil
+	//}
+	//return hints
+	// FIX
+	valid := subtle.ConstantTimeLessOrEq(weight, int(cfg.Omega))
+	return hints[:int(cfg.K)*valid]
 }
 
 // Algorithm 40

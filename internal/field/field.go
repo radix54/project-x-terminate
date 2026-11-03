@@ -143,14 +143,14 @@ func (a T) Decompose(gamma2 uint32) (r1 int32, r0 int32) {
 	//r1 -= adjustDown & 1
 	//r0 += adjustDown & twoGamma2
 	// FIX
-	_, remainder := DivConstTime32(uint32(r), uint32(twoGamma2))
+	_, remainder := DivBarrett(uint32(r), uint32(twoGamma2))
 	r0 = int32(remainder)
 	adjust := subtle.ConstantTimeLessOrEq(int(gamma2Int)+1, int(r0))
 	r0 -= int32(-adjust) & twoGamma2
 
 	difference := r - r0
 	wrap := subtle.ConstantTimeEq(difference, int32(q-1))
-	quotient, _ := DivConstTime32(uint32(difference), uint32(twoGamma2))
+	quotient, _ := DivBarrett(uint32(difference), uint32(twoGamma2))
 	r1 = int32(quotient) &^ int32(-wrap)
 	r0 -= int32(wrap)
 

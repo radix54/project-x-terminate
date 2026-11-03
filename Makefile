@@ -14,10 +14,7 @@ GOBUILD := CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 go build -trimpath
 IMAGE := docker.io/binsec/binsec@sha256:2a51e455f055874d71cbf030a778e8be19455876bcd57c1845c163fed6fc482f
 CONTAINER := $(ENGINE) run --rm --network=none --user root -v "$(CURDIR):/work:ro" -w /work \
 	$(if $(filter podman,$(ENGINE)),--security-opt=label=disable) $(IMAGE)
-# -checkct: constant-time check. Stop at the first leak; the limits keep each run short.
-# The expanded-key encoder processes several 256-coefficient vectors. Allow
-# enough symbolic execution depth to finish those fixed-trip-count loops.
-BINSEC := binsec -sse -checkct -checkct-leak-info halt -sse-depth 50000 -sse-timeout 120 -smt-timeout 5
+BINSEC := binsec -sse -checkct -checkct-leak-info halt -sse-depth 600000 -sse-timeout 120 -smt-timeout 5
 
 run: build
 	@./$(BIN)
