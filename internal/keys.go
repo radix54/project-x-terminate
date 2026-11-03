@@ -46,6 +46,7 @@ func (vk *VerifyingKey) Bytes() []byte {
 // Algorithm 23
 // א
 //
+// analyzed ✓
 //go:noinline
 func PkDecode(cfg *params.Cfg, pk []byte) (*VerifyingKey, error) {
 	// error handling: Check len(pk) == int(cfg.PkSize) and return an error; short inputs can panic, while long inputs have trailing bytes ignored.
