@@ -25,6 +25,7 @@ func IntegerToBits[T ~uint32](x T, a int) []byte {
 //
 //go:inline
 func bitPack[T int32 | uint32](w []T, k uint8) []byte {
+	// ANALYZED
 	n := len(w)
 	numBytes := (n*int(k) + 7) >> 3
 	z := make([]byte, numBytes)
@@ -39,7 +40,11 @@ func bitPack[T int32 | uint32](w []T, k uint8) []byte {
 		j := k // number of bits left to store in the current value
 
 		for l <= j {
-			z[m] &= byte(v << (8 - l)) // bytes fill from the lsb to the msb
+
+			// BUG: This should be |=, not &=
+			//z[m] &= byte(v << (8 - l)) // bytes fill from the lsb to the msb
+			z[m] |= byte(v << (8 - l))
+
 			v >>= l
 			j -= l
 			m += 1
