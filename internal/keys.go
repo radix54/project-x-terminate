@@ -140,6 +140,7 @@ func SkDecode(cfg *params.Cfg, sk []byte) (*SigningKey, error) {
 //
 //go:noinline
 func (sk SigningKey) EncodeExpanded() []byte {
+	//ANALYZED
 	encoded := append(sk.rho[:], sk.K[:]...)
 	encoded = append(encoded, sk.tr[:]...)
 
@@ -152,6 +153,7 @@ func (sk SigningKey) EncodeExpanded() []byte {
 		encoded = append(encoded, packed[:]...)
 	}
 	for i := range sk.cfg.K {
+		// BUG: should be params.D -1, not params.D
 		packed := util.BitPack(sk.t0[i].Symmetric(), params.D)
 		encoded = append(encoded, packed[:]...)
 	}
