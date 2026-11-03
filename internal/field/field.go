@@ -201,7 +201,7 @@ func FromHalfByte(eta int, b byte) *T {
 //
 //go:noinline
 func FromThreeBytes(b0, b1, b2 byte) *T {
-	//
+	// ANALYZED
 	var r T
 	bp2 := uint32(b2 & 0x7f)
 	z := (bp2 << 16) | uint32(b1)<<8 | uint32(b0)
