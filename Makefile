@@ -15,7 +15,9 @@ IMAGE := docker.io/binsec/binsec@sha256:2a51e455f055874d71cbf030a778e8be19455876
 CONTAINER := $(ENGINE) run --rm --network=none --user root -v "$(CURDIR):/work:ro" -w /work \
 	$(if $(filter podman,$(ENGINE)),--security-opt=label=disable) $(IMAGE)
 # -checkct: constant-time check. Stop at the first leak; the limits keep each run short.
-BINSEC := binsec -sse -checkct -checkct-leak-info halt -sse-depth 10000 -sse-timeout 120 -smt-timeout 5
+# The expanded-key encoder processes several 256-coefficient vectors. Allow
+# enough symbolic execution depth to finish those fixed-trip-count loops.
+BINSEC := binsec -sse -checkct -checkct-leak-info halt -sse-depth 50000 -sse-timeout 120 -smt-timeout 5
 
 run: build
 	@./$(BIN)
