@@ -48,7 +48,7 @@ func (vk *VerifyingKey) Bytes() []byte {
 //
 //go:noinline
 func PkDecode(cfg *params.Cfg, pk []byte) (*VerifyingKey, error) {
-	// ANALYZED
+	//
 
 	// BUG: missing check for length of pk
 	// FIX
@@ -146,7 +146,7 @@ func SkDecode(cfg *params.Cfg, sk []byte) (*SigningKey, error) {
 //
 //go:noinline
 func (sk SigningKey) EncodeExpanded() []byte {
-	//ANALYZED
+	//
 	encoded := append(sk.rho[:], sk.K[:]...)
 	encoded = append(encoded, sk.tr[:]...)
 

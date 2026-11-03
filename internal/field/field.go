@@ -88,7 +88,7 @@ func (a T) Mul(b T) T {
 //
 //go:noinline
 func (a T) Power2Round() (int32, int32) {
-	//ANALYZED
+	//
 	r0 := int32(a.reduced) & ((1 << d) - 1)
 
 	if r0 > 1<<(d-1) {
@@ -107,7 +107,7 @@ func (a T) Power2Round() (int32, int32) {
 //
 //go:noinline
 func (a T) Decompose(gamma2 uint32) (r1 int32, r0 int32) {
-	// ANALYZED
+	//
 	r := int32(a.Reduced())
 	twoGamma2 := int32(gamma2 << 1)
 	gamma2Int := int32(gamma2)
@@ -201,7 +201,7 @@ func FromHalfByte(eta int, b byte) *T {
 //
 //go:noinline
 func FromThreeBytes(b0, b1, b2 byte) *T {
-	// ANALYZED
+	//
 	var r T
 	bp2 := uint32(b2 & 0x7f)
 	z := (bp2 << 16) | uint32(b1)<<8 | uint32(b0)
