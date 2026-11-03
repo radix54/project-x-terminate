@@ -33,7 +33,7 @@ jobs:
 
                   marks=$(git grep -o -F "$MARK" -- '*.go' | wc -l | tr -d '[:space:]')
                   bugs=$(git grep -o -F "$BUG" -- '*.go' | wc -l | tr -d '[:space:]')
-                  percentage=$(awk -v bugs="$bugs" -v marks="$marks" 'BEGIN { if (marks == 0) print "0.00"; else printf "%.2f", bugs * 100 / marks }')
+                  percentage=""$bugs"/"$marks""
 
                   mkdir -p .github/badges
                   printf '{"schemaVersion":1,"label":"Bugs Found","message":"%s%%","color":"red"}\n' "$percentage" > .github/badges/bugs.json
