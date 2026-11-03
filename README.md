@@ -36,6 +36,12 @@ We constructed the usual .ini files for the functions that worked on non public 
 - auxiliary.go/MakeHint: proven secure
 - sign.go/SignInternal: unknown
 
+## Execution
+To execute a short demo and KAT tests run:
+```sh
+docker pull ghcr.io/radix54/project-x-terminate:latest
+```
+
 ## Author
 Group:  Deep Thought
 - 267234 Marco Egidio Pusceddu @MARCO5P
