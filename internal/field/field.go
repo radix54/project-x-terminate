@@ -107,7 +107,7 @@ func (a T) Power2Round() (int32, int32) {
 //
 //go:noinline
 func (a T) Decompose(gamma2 uint32) (r1 int32, r0 int32) {
-	//
+	// ANALYZED
 	r := int32(a.Reduced())
 	twoGamma2 := int32(gamma2 << 1)
 	gamma2Int := int32(gamma2)
@@ -143,13 +143,15 @@ func (a T) Decompose(gamma2 uint32) (r1 int32, r0 int32) {
 	//r1 -= adjustDown & 1
 	//r0 += adjustDown & twoGamma2
 	// FIX
-	r0 = r % twoGamma2
+	_, remainder := DivConstTime32(uint32(r), uint32(twoGamma2))
+	r0 = int32(remainder)
 	adjust := subtle.ConstantTimeLessOrEq(int(gamma2Int)+1, int(r0))
 	r0 -= int32(-adjust) & twoGamma2
 
 	difference := r - r0
 	wrap := subtle.ConstantTimeEq(difference, int32(q-1))
-	r1 = (difference / twoGamma2) &^ int32(-wrap)
+	quotient, _ := DivConstTime32(uint32(difference), uint32(twoGamma2))
+	r1 = int32(quotient) &^ int32(-wrap)
 	r0 -= int32(wrap)
 
 	return r1, r0
