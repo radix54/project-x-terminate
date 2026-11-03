@@ -59,3 +59,5 @@ check: image
 	$(CONTAINER) $(BINSEC) -sse-script $(CONFIG) -file build/target
 
 
+disasm:
+	go tool objdump -s '$(FUNC)$$' $(BIN)

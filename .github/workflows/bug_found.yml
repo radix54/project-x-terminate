@@ -1,0 +1,55 @@
+name: Bugs Found
+
+on:
+    push:
+        branches: [ "master" ]
+
+concurrency:
+    group: bugs-found-badge-${{ github.ref }}
+    cancel-in-progress: false
+
+env:
+    MARK: "א"
+    BUG: "BUG"
+
+jobs:
+    count:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+
+            - name: Create badge
+              run: |
+                git config user.name "github-actions[bot]"
+                git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+                for attempt in 1 2 3 4 5; do
+                  git fetch origin master
+                  git reset --hard origin/master
+
+                  marks=$(git grep -o -F "$MARK" -- '*.go' | wc -l | tr -d '[:space:]')
+                  bugs=$(git grep -o -F "$BUG" -- '*.go' | wc -l | tr -d '[:space:]')
+                  percentage=$(awk -v bugs="$bugs" -v marks="$marks" 'BEGIN { if (marks == 0) print "0.00"; else printf "%.2f", bugs * 100 / marks }')
+
+                  mkdir -p .github/badges
+                  printf '{"schemaVersion":1,"label":"Bugs Found","message":"%s%%","color":"blue"}\n' "$percentage" > .github/badges/bugs.json
+                  git add .github/badges/bugs.json
+
+                  if git diff --cached --quiet; then
+                    exit 0
+                  fi
+
+                  git commit -m "Update bugs found badge"
+                  if git push origin HEAD:master; then
+                    exit 0
+                  fi
+
+                  sleep 2
+                done
+
+                echo "Could not publish bugs found badge after 5 attempts" >&2
+                exit 1
