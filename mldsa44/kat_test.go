@@ -64,7 +64,14 @@ func TestKeyGenFromSeedKAT(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			gotPublicKey := priv.Public().(*PublicKey).Bytes()
+			var gotPublicKey []byte
+			if pub, ok := priv.Public().(*PublicKey); ok {
+				gotPublicKey = pub.Bytes()
+			} else if pub, ok := priv.Public().(interface{ Bytes() []byte }); ok {
+				gotPublicKey = pub.Bytes()
+			} else {
+				t.Fatalf("unexpected public key type: %T", priv.Public())
+			}
 			if want := decodeHex(t, vector.RawPublicKey); !bytes.Equal(gotPublicKey, want) {
 				t.Fatal("public key mismatch")
 			}
