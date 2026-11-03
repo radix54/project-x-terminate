@@ -1,5 +1,9 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE.md)
 
+[![Analyze](https://github.com/radix54/project-x-terminate/actions/workflows/analyze.yml/badge.svg)](https://github.com/radix54/project-x-terminate/actions/workflows/analyze.yml)
+[![Bugs fixed](https://github.com/radix54/project-x-terminate/actions/workflows/bug_fixed.yml/badge.svg)](https://github.com/radix54/project-x-terminate/actions/workflows/bug_fixed.yml)
+[![Bugs found](https://github.com/radix54/project-x-terminate/actions/workflows/bug_found.yml/badge.svg)](https://github.com/radix54/project-x-terminate/actions/workflows/bug_found.yml)
+
 # Project X-Terminate
 
 > [!Warning]
