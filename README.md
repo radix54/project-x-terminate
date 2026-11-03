@@ -11,14 +11,13 @@
 > [!Warning]
 > Do not use this code in real-world implementation.
 
+## Fixing the bugs
+We reviewed and corrected all flagged functions to ensure formal equivalence with the corresponding algorithms in the ML-DSA documentation (FIPS 204). [https://csrc.nist.gov/pubs/fips/204/final]
 
 ## Author
 Group:  Deep Thought
 - 267234 Marco Egidio Pusceddu @MARCO5P
 - 267646 Radice Lorenzo @ozneroL541
-
-## Fixing the bugs
-We reviewed and corrected all flagged functions to ensure formal equivalence with the corresponding algorithms in the ML-DSA documentation (FIPS 204). [https://csrc.nist.gov/pubs/fips/204/final]
 
 ## License
 Copyright (C) 2026 Marco Egidio Pusceddu, Lorenzo Radice
