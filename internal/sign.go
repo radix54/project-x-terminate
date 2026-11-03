@@ -21,6 +21,7 @@ import (
 // Returns a signature as a []byte
 // א
 //
+// analyzed ✓
 //go:noinline
 func (sk *SigningKey) SignInternal(Mprime, rnd []byte) []byte {
 	cfg := sk.cfg
@@ -115,6 +116,7 @@ func (sk *SigningKey) Sign(message []byte) ([]byte, error) {
 // Returns false otherwise (even if an error occurs).
 // א
 //
+// analyzed ✓
 //go:noinline
 func (pk *VerifyingKey) VerifyInternal(Mprime, sigma []byte) bool {
 	cfg := pk.cfg

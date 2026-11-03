@@ -174,6 +174,8 @@ func HintBitPack(k, omega uint8, h []ring.R2) []byte {
 // This is used by signature verification
 // א
 //
+// analyzed ✓
+//
 //go:noinline
 func HintBitUnpack(k, omega uint8, y []byte) ([]ring.R2, error) {
 	h := make([]ring.R2, k)
