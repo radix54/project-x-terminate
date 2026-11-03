@@ -25,10 +25,9 @@ func SigEncode(cfg *params.Cfg, c []byte, z []ring.Rq, h []ring.R2) []byte {
 // Algorithm 27
 // א
 //
-// analyzed ✓
-//
 //go:noinline
 func SigDecode(cfg *params.Cfg, sig []byte) ([]byte, []ring.Rz, []ring.R2, error) {
+	// ANALYZED
 	if len(sig) != int(cfg.SigSize) {
 		return nil, nil, nil, errors.New("invalid signature size")
 	}

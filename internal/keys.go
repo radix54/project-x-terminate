@@ -54,7 +54,7 @@ func PkDecode(cfg *params.Cfg, pk []byte) (*VerifyingKey, error) {
 	z := pk[32:]
 
 	t1 := make([]ring.Rq, cfg.K)
-	elemLen := int(10*params.N) >> 3  // = 32(bitlen(q-1)-d)
+	elemLen := int(10*params.N) >> 3 // = 32(bitlen(q-1)-d)
 	for i := range cfg.K {
 		// z[i] in the documentation is a block of elemLen bytes.
 		t1[i] = ring.FromSymmetric(util.SimpleBitUnpack(z[:elemLen], 10))
