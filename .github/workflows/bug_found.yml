@@ -1,4 +1,4 @@
-name: Analyzed Functions
+name: Bugs found
 
 on:
     push:
