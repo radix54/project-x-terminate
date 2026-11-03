@@ -176,7 +176,7 @@ func HintBitPack(k, omega uint8, h []ring.R2) []byte {
 //
 //go:noinline
 func HintBitUnpack(k, omega uint8, y []byte) ([]ring.R2, error) {
-	// ANNALYZED
+	// ANALYZED
 	h := make([]ring.R2, k)
 	index := byte(0)
 	for i := range k {
