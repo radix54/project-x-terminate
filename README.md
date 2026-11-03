@@ -24,8 +24,10 @@ The following functions:
 - feld.go/FromThreeBytes
 - auxiliary.go/SigDecode
 - auxiliary.go/UseHint
-- bits.go/HintBitUnpack /n
+- bits.go/HintBitUnpack 
+
 work on only public inputs, so no further investigation on the security is required.
+
 ## With Binsec:
 We constructed the usual .ini files for the functions that worked on non public inputs
 - field.go/Decompose: proven secure
