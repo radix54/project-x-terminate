@@ -40,6 +40,7 @@ func SigDecode(cfg *params.Cfg, sig []byte) ([]byte, []ring.Rz, []ring.R2, error
 		x, sigma = sigma[:elemLen], sigma[elemLen:]
 		z[i] = BitUnpack(x, cfg.LogGamma1)
 	}
+	// BUG: in HintBitUnpack
 	h, err := HintBitUnpack(cfg.K, cfg.Omega, sigma)
 	if err != nil {
 		return nil, nil, nil, err
