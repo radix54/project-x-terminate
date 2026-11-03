@@ -57,7 +57,12 @@ func bitPack[T int32 | uint32](w []T, k uint8) []byte {
 		}
 
 		// Store the remaining bits in the current byte
-		z[m] &= byte(v << (8 - l))
+
+		// BUG: This should be |=, not &=
+		//z[m] &= byte(v << (8 - l)) // bytes fill from the lsb to the msb
+		// FIX
+		z[m] |= byte(v << (8 - l))
+
 		l -= j
 	}
 	return z

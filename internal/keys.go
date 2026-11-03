@@ -49,7 +49,13 @@ func (vk *VerifyingKey) Bytes() []byte {
 //go:noinline
 func PkDecode(cfg *params.Cfg, pk []byte) (*VerifyingKey, error) {
 	// ANALYZED
-	// error handling: Check len(pk) == int(cfg.PkSize) and return an error; short inputs can panic, while long inputs have trailing bytes ignored.
+
+	// BUG: missing check for length of pk
+	// FIX
+	if len(pk) != int(cfg.PkSize) {
+		return nil, errors.New("invalid public key size")
+	}
+
 	rho := pk[:32]
 	z := pk[32:]
 
