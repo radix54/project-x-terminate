@@ -44,7 +44,7 @@ run_test: build
 
 # make check on every configuration, then make line for each leak; one line per verdict.
 # BINSEC prints a status even when it aborts on an error, so check for that too.
-binsec: image
+binsec: image build
 	@for config in binsec/*.ini; do \
 		out=$$($(CONTAINER) $(BINSEC) -sse-script $$config -file $(BIN) 2>&1); \
 		status=$$(echo "$$out" | sed -n 's/.*Program status is : \([a-z]*\).*/\1/p'); \
