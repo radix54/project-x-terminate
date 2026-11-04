@@ -14,7 +14,7 @@
 > Do not use this code in real-world implementation.
 
 ## Fixing the bugs
-We reviewed and corrected all flagged functions to ensure formal equivalence with the corresponding algorithms in the ML-DSA documentation (FIPS 204). [https://csrc.nist.gov/pubs/fips/204/final].
+We reviewed and corrected all flagged functions to ensure formal equivalence with the corresponding algorithms in the ML-DSA documentation [FIPS 204](https://csrc.nist.gov/pubs/fips/204/final).
 
 ## On the analysis of the flagged functions
 The following functions:
@@ -30,7 +30,10 @@ work on only public inputs, so no further investigation on the security is requi
 Moreover, we noticed that bits.go/bitPack does not leak any information about w even when w is secret (k instead is public). Indeed, the operations made on w are built-in in go and are costant-tyme on same input length, and the for loop iterates on the length of w which is fixed (hence public). So we consider it as secure.
 
 ## With Binsec:
-We constructed the usual .ini files for the functions that worked on non public inputs
+We constructed the usual .ini files for the functions that worked on non public values.
+We evaluated and fixed according to information leakage the funcitons.
+
+Functions interested by the evaluation:
 - field.go/Decompose: proven secure
 - keys.go/EncodeExpanded: proven secure
 - auxiliary.go/MakeHint: proven secure
